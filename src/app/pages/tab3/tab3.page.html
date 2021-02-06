@@ -1,0 +1,19 @@
+<ion-header class="ion-no-border" no-border>
+  <ion-toolbar color="dark">
+    <ion-title>
+      Favoritos
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+<!-- en la siguiente seccion se coloco un slider que no se pueda mover a ningun lado, solo para que tenga el texto centrado, con la informacion de que  no hay nada en favoritos-->
+<!-- lo siguiente lo realizo fernando herrera ya que segun el, no es bueno para css -->
+  <ion-slides *ngIf="dataLocalService.noticias.length === 0" [options]="opciones" >
+    <ion-slide>
+      <ion-label>No hay favoritos</ion-label>
+    </ion-slide>
+  </ion-slides>
+
+  <app-noticias [noticias]="dataLocalService.noticias" [enFavoritos]="true"></app-noticias>
+</ion-content>
