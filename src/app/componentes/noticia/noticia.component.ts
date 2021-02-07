@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, Platform } from '@ionic/angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { DataLocalService } from '../../servicios/data-local.service';
 import { ToastController } from '@ionic/angular';
@@ -19,7 +19,7 @@ export class NoticiaComponent implements OnInit {
     private actionSheetController: ActionSheetController,
     private socialSharing: SocialSharing,
     private dataLocalService:DataLocalService,
-    private toastController:ToastController
+    private platform: Platform
     ) { }
 
   ngOnInit() {}
@@ -75,17 +75,29 @@ export class NoticiaComponent implements OnInit {
     await actionSheet.present();
   }
 
-  compartir(){
-    // Check if sharing via email is supported
-    this.socialSharing.share(
-      this.noticia.title,
-      this.noticia.source.name,
-      '',
-      this.noticia.url
-      ) .then(() => {
-      // Sharing via email is possible
-    }).catch(() => {
-      // Sharing via email is not possible
-    });
+  compartir() {
+    if ( this.platform.is('cordova') ) {
+      this.socialSharing.share(
+        this.noticia.title,
+        this.noticia.source.name,
+        '',
+        this.noticia.url
+      );
+    } else {
+
+      if (navigator['share'] ) {
+
+        navigator['share']({
+            title: this.noticia.title,
+            text: this.noticia.description,
+            url: this.noticia.url,
+        })
+          .then(() => console.log('Successful share'))
+          .catch((error) => console.log('Error sharing', error));
+      } else {
+        console.log('No se pudo compartir porque no se soporta');
+      }
+
+    }
   }
 }
